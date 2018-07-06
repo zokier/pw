@@ -7,23 +7,17 @@
 
 #include "words.h"
 
-#define RANDOM_LEN 64
+#define RANDOM_LEN 128
 #define MIN_ENTROPY 64.0
 
 int main(int argc, char **argv) {
-    uint16_t random_bytes[RANDOM_LEN/2] = {0};
+    uint16_t random_bytes[RANDOM_LEN] = {0};
     double pw_entropy = 0.0;
-    ssize_t random_index = 0;
-    ssize_t random_available = 0;
+    getrandom(random_bytes, RANDOM_LEN*2, 0);
     size_t rand_mask = (2 << (size_t)WORD_ENTROPY) - 1;
-    while (pw_entropy < MIN_ENTROPY) {
-        if (2*(random_index+1) >= random_available) {
-            // getrandom will not fail for requests smaller than 256 bytes
-            random_available = getrandom(random_bytes, RANDOM_LEN, 0);
-            random_index = 0;
-            continue;
-        }
-        size_t rand = random_bytes[random_index++];
+    for (size_t random_index = 0; pw_entropy < MIN_ENTROPY; random_index++) {
+        if (random_index >= RANDOM_LEN) return -1;
+        size_t rand = random_bytes[random_index];
         rand = rand & rand_mask;
         if (rand < WORD_COUNT) {
             pw_entropy += WORD_ENTROPY;

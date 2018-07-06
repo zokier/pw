@@ -9,19 +9,19 @@
 
 int main(int argc, char **argv) {
     uint16_t random_bytes[RANDOM_LEN] = {0};
-    double pw_entropy = 0.0;
+    // getrandom always succeeds for <=256B requests
     getrandom(random_bytes, RANDOM_LEN*2, 0);
+    double pw_entropy = 0.0;
     size_t rand_mask = (2 << (size_t)WORD_ENTROPY) - 1;
     for (size_t random_index = 0; pw_entropy < MIN_ENTROPY; random_index++) {
+        // this should never happen
         if (random_index >= RANDOM_LEN) return -1;
-        size_t rand = random_bytes[random_index];
-        rand = rand & rand_mask;
+        size_t rand = random_bytes[random_index] & rand_mask;
         if (rand < WORD_COUNT) {
             const char *word = WORDS[rand];
             // skip space at the beginning for the first word
             if (pw_entropy == 0.0) word++;
-            int res = fputs(word, stdout);
-            if (res < 0) return -1;
+            if (fputs(word, stdout) < 0) return -1;
             pw_entropy += WORD_ENTROPY;
         }
     }

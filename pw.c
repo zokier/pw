@@ -1,8 +1,5 @@
 #include <stdio.h>
 #include <stdint.h>
-#include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
 #include <sys/random.h>
 
 #include "words.h"

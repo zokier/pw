@@ -23,8 +23,6 @@ int main(int argc, char **argv) {
             pw_entropy += WORD_ENTROPY;
             int res = fputs(WORDS[rand], stdout);
             if (res < 0) return -1;
-            res = fputc(' ', stdout);
-            if (res < 0) return -1;
         }
     }
     fputc('\n', stdout);

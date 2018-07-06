@@ -17,9 +17,12 @@ int main(int argc, char **argv) {
         size_t rand = random_bytes[random_index];
         rand = rand & rand_mask;
         if (rand < WORD_COUNT) {
-            pw_entropy += WORD_ENTROPY;
-            int res = fputs(WORDS[rand], stdout);
+            const char *word = WORDS[rand];
+            // skip space at the beginning for the first word
+            if (pw_entropy == 0.0) word++;
+            int res = fputs(word, stdout);
             if (res < 0) return -1;
+            pw_entropy += WORD_ENTROPY;
         }
     }
     fputc('\n', stdout);
